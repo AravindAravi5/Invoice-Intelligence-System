@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  invoice-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: invoice-intelligence-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./temp_uploads:/app/temp_uploads
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=INFO
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      - MAX_UPLOAD_SIZE_MB=50
+      - CLEANUP_TEMP_FILES=true
+      - OCR_LANGUAGE=eng
+      - EMBEDDING_BATCH_SIZE=32
+      - CLUSTERING_EPS=0.1
+      - CLUSTERING_MIN_SAMPLES=3
+      - ANOMALY_CONTAMINATION=0.1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/docs')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - invoice-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  invoice-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: invoice-intelligence-ui
+    command: ["python", "-m", "streamlit", "run", "ui.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://invoice-api:8000
+    depends_on:
+      - invoice-api
+    restart: unless-stopped
+    networks:
+      - invoice-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+networks:
+  invoice-network:
+    driver: bridge

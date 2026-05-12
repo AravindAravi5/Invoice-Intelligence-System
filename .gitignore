@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# OCR/Temp files
+temp_uploads/
+temp_setup/
+bin/
+*.log
+*.pdf
+*.jpg
+*.jpeg
+*.png
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+Desktop.ini
