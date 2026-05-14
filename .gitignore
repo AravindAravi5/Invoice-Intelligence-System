@@ -13,15 +13,25 @@ temp_uploads/
 temp_setup/
 bin/
 *.log
-*.pdf
-*.jpg
-*.jpeg
-*.png
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
 
 # IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 Thumbs.db
 Desktop.ini
+.DS_Store
+
+# Docker
+*.tar
+
+# Models (downloaded at runtime)
+models/
