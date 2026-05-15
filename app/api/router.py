@@ -64,7 +64,8 @@ async def process_invoice(request: Request, file: UploadFile = File(...)):
     Accepts PDF, PNG, JPG, JPEG, and TIFF files.
     """
     # ── Validate file ────────────────────────────────────────────────
-    ext = Path(file.filename).suffix.lower()
+    filename = file.filename or "unknown.txt"
+    ext = Path(filename).suffix.lower()
     if ext not in settings.allowed_extensions:
         raise HTTPException(
             status_code=400,
@@ -73,18 +74,18 @@ async def process_invoice(request: Request, file: UploadFile = File(...)):
 
     # ── Save to temp directory ───────────────────────────────────────
     os.makedirs(settings.upload_dir, exist_ok=True)
-    file_path = os.path.join(settings.upload_dir, f"{uuid.uuid4()}_{file.filename}")
+    file_path = os.path.join(settings.upload_dir, f"{uuid.uuid4()}_{filename}")
 
     try:
         content = await file.read()
         with open(file_path, "wb") as f:
             f.write(content)
 
-        logger.info("Processing invoice: %s (%d bytes)", file.filename, len(content))
+        logger.info("Processing invoice: %s (%d bytes)", filename, len(content))
 
         # ── Run pipeline ─────────────────────────────────────────────
         pipeline = request.app.state.pipeline
-        result = pipeline.process_single_file(file_path, filename=file.filename)
+        result = pipeline.process_single_file(file_path, filename=filename)
 
         return JSONResponse(content=result.to_api_response())
 

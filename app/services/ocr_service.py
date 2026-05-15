@@ -149,7 +149,7 @@ class OCRService:
             try:
                 import pytesseract
 
-                text = pytesseract.image_to_string(preprocessed, config="--psm 6")
+                text = str(pytesseract.image_to_string(preprocessed, config="--psm 6"))
                 return text.strip()
             except Exception as exc:
                 logger.warning("Tesseract failed: %s", exc)
@@ -189,7 +189,7 @@ class OCRService:
         try:
             from pdf2image import convert_from_path
 
-            images = convert_from_path(pdf_path, poppler_path=self.poppler_path)
+            images = convert_from_path(pdf_path, poppler_path=self.poppler_path)  # type: ignore
             if not images:
                 raise OCRExtractionError("PDF appears empty or unreadable")
 

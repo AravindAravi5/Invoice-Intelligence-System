@@ -142,10 +142,12 @@ class NERService:
             confidence = (start_prob + end_prob) / 2.0
 
             # Decode the answer tokens back to text
-            answer = self.tokenizer.decode(
+            answer_raw = self.tokenizer.decode(
                 inputs.input_ids[0][start_idx:end_idx],
                 skip_special_tokens=True,
-            ).strip()
+            )
+            answer = " ".join(answer_raw) if isinstance(answer_raw, list) else answer_raw
+            answer = answer.strip()
 
             if confidence >= self.confidence_threshold and answer:
                 return ExtractedField(value=answer, confidence=round(confidence, 4))

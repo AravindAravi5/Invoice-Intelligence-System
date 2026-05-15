@@ -56,7 +56,7 @@ class EmbeddingService:
     @property
     def embedding_dim(self) -> int:
         """Dimensionality of the output embedding vectors."""
-        return self._embedding_dim
+        return int(self._embedding_dim)
 
     # ── Core Embedding Methods ───────────────────────────────────────
 
@@ -144,7 +144,7 @@ class EmbeddingService:
             raise EmbeddingError(f"Unknown reduction method: {method}")
 
         logger.info("Reducing %d embeddings to 2D using %s", n_samples, method.upper())
-        return reducer.fit_transform(embeddings)
+        return np.array(reducer.fit_transform(embeddings))
 
     def compute_similarity_matrix(self, embeddings: np.ndarray) -> np.ndarray:
         """
@@ -154,7 +154,7 @@ class EmbeddingService:
             Square matrix of shape (n_samples, n_samples) with values in [-1, 1].
             Values close to 1 indicate very similar invoices.
         """
-        return cosine_similarity(embeddings)
+        return np.array(cosine_similarity(embeddings))
 
     # ── Internal Helpers ─────────────────────────────────────────────
 

@@ -42,7 +42,7 @@ logging.basicConfig(
 # ── Application Lifespan ─────────────────────────────────────────────────
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(fastapi_app: FastAPI):
     """
     Manages ML model lifecycle.
 
@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI):
     logger.info("  Invoice Intelligence System v%s — Starting Up", __version__)
     logger.info("=" * 60)
 
-    app.state.start_time = time.time()
+    fastapi_app.state.start_time = time.time()
 
     # ── Initialize ML Services ───────────────────────────────────────
     logger.info("Loading ML models (this may take a moment)...")
@@ -86,7 +86,7 @@ async def lifespan(app: FastAPI):
         )
 
         # ── Assemble Pipeline ────────────────────────────────────────
-        app.state.pipeline = PipelineService(
+        fastapi_app.state.pipeline = PipelineService(
             ocr_service=ocr_service,
             ner_service=ner_service,
             embedding_service=embedding_service,
@@ -95,15 +95,15 @@ async def lifespan(app: FastAPI):
         )
 
         # Store individual services for direct access (e.g., re-clustering)
-        app.state.embedding_service = embedding_service
-        app.state.clustering_service = clustering_service
-        app.state.anomaly_service = anomaly_service
+        fastapi_app.state.embedding_service = embedding_service
+        fastapi_app.state.clustering_service = clustering_service
+        fastapi_app.state.anomaly_service = anomaly_service
 
-        elapsed = time.time() - app.state.start_time
+        elapsed = time.time() - fastapi_app.state.start_time
         logger.info("All ML models loaded successfully in %.1fs", elapsed)
         logger.info("=" * 60)
 
-    except Exception as exc:
+    except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.error("Failed to load ML models: %s", exc)
         logger.warning("Server will start but endpoints may fail")
 
@@ -139,7 +139,7 @@ def create_app() -> FastAPI:
 
     # ── Exception Handlers ───────────────────────────────────────────
     @app.exception_handler(InvoiceIntelligenceError)
-    async def handle_pipeline_error(request: Request, exc: InvoiceIntelligenceError):
+    async def handle_pipeline_error(_request: Request, exc: InvoiceIntelligenceError):
         return JSONResponse(
             status_code=422,
             content={
