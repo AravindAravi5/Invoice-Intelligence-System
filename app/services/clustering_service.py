@@ -40,8 +40,8 @@ from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional
 
 import numpy as np
-from sklearn.cluster import DBSCAN
-from sklearn.metrics import silhouette_score, silhouette_samples
+from sklearn.cluster import DBSCAN  # type: ignore
+from sklearn.metrics import silhouette_score, silhouette_samples  # type: ignore
 
 from app.exceptions import ClusteringError
 

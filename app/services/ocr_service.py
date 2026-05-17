@@ -16,7 +16,7 @@ import logging
 from typing import Optional
 
 import numpy as np
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter  # type: ignore
 
 from app.exceptions import OCRExtractionError
 
@@ -46,7 +46,7 @@ class OCRService:
         # ── Configure Tesseract ──────────────────────────────────────
         if tesseract_cmd:
             try:
-                import pytesseract
+                import pytesseract  # type: ignore
 
                 pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
                 self._tesseract_available = True
@@ -55,7 +55,7 @@ class OCRService:
                 logger.warning("pytesseract not installed — Tesseract backend unavailable")
         else:
             try:
-                import pytesseract
+                import pytesseract  # type: ignore
 
                 pytesseract.get_tesseract_version()
                 self._tesseract_available = True
@@ -65,7 +65,7 @@ class OCRService:
 
         # ── Initialize EasyOCR ───────────────────────────────────────
         try:
-            import easyocr
+            import easyocr  # type: ignore
 
             self._easyocr_reader = easyocr.Reader(["en"], verbose=False)
             logger.info("EasyOCR initialized successfully")
@@ -147,7 +147,7 @@ class OCRService:
         # Priority 2: Tesseract
         if self._tesseract_available:
             try:
-                import pytesseract
+                import pytesseract  # type: ignore
 
                 text = str(pytesseract.image_to_string(preprocessed, config="--psm 6"))
                 return text.strip()
@@ -167,7 +167,7 @@ class OCRService:
         """
         # Strategy 1: PyMuPDF native text extraction (for digital PDFs)
         try:
-            import fitz
+            import fitz  # type: ignore
 
             doc = fitz.open(pdf_path)
             pages = []

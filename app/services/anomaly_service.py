@@ -35,8 +35,8 @@ from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, Union, List
 
 import numpy as np
-from sklearn.ensemble import IsolationForest
-from sklearn.impute import SimpleImputer
+from sklearn.ensemble import IsolationForest  # type: ignore
+from sklearn.impute import SimpleImputer  # type: ignore
 
 from app.exceptions import AnomalyDetectionError
 

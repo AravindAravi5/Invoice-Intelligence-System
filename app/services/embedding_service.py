@@ -25,10 +25,10 @@ import logging
 from typing import Dict, Any, List, Optional, Union
 
 import numpy as np
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
-from sklearn.metrics.pairwise import cosine_similarity
-from sentence_transformers import SentenceTransformer
+from sklearn.decomposition import PCA  # type: ignore
+from sklearn.manifold import TSNE  # type: ignore
+from sklearn.metrics.pairwise import cosine_similarity  # type: ignore
+from sentence_transformers import SentenceTransformer  # type: ignore
 
 from app.exceptions import EmbeddingError
 
